@@ -98,7 +98,52 @@ void loop(){
  * These are the functions that actually generate
  * the JSON formatted string containing the measured values or list
  * the addresses depending on the RUNMODE
+ *
+ * the format shall follow this pattern
+ * {
+ *    "topic-name":"<topicname>",
+ *    "payload":{
+ *    	<paylod >
+ *    }
+ * }
+ *
+ * in this case we set an array of temperatures as pay load and "temperatures" as topic name
+ *
+ * {
+ *    "topic-name":"temperatures",
+ *    "payload":{
+ *       "values":[
+ *          "22.55",
+ *          "22.55",
+ *          "22.55",
+ *          "22.55",
+ *         "22.55"
+ *       ]
+ *    }
+ * }
+ *
  */
+
+#if (RUNMODE == REAL) || (RUNMODE==FAKE)
+/* formats the measured values according the JSON structure and sends it over the Serial */
+void array2json(){
+	Serial.print("{");
+	Serial.print("\"topic-name\":\"temperatures\",");
+	Serial.print("\"payload\": {");
+	Serial.print("\"values\": [");
+	Serial.print("\"");Serial.print(sensorvalues[0]);Serial.print("\",");
+	Serial.print("\"");Serial.print(sensorvalues[1]);Serial.print("\",");
+	Serial.print("\"");Serial.print(sensorvalues[2]);Serial.print("\",");
+	Serial.print("\"");Serial.print(sensorvalues[3]);Serial.print("\",");
+	Serial.print("\"");Serial.print(sensorvalues[4]);Serial.print("\"");
+	Serial.print("]");
+	Serial.print("}");
+	Serial.print("}");
+	Serial.println();
+}
+#endif
+
+
 #if (RUNMODE == REAL)
 /* Measure real values */
 void measure(void){
@@ -109,17 +154,7 @@ void measure(void){
 	for(c = 0; c < SENSOR_COUNT; c++)
 		sensorvalues[c] = sensors.getTempC(sensordevs[c]);
 
-	Serial.print("{");
-	Serial.print("\"topic-name\":\"water-temperatures\",");
-	Serial.print("\"values\": [");
-	Serial.print("\"");Serial.print(sensorvalues[0]);Serial.print("\",");
-	Serial.print("\"");Serial.print(sensorvalues[1]);Serial.print("\",");
-	Serial.print("\"");Serial.print(sensorvalues[2]);Serial.print("\",");
-	Serial.print("\"");Serial.print(sensorvalues[3]);Serial.print("\",");
-	Serial.print("\"");Serial.print(sensorvalues[4]);Serial.print("\"");
-	Serial.print("]");
-	Serial.print("}");
-	Serial.println();
+	array2json();
 
 	display.clearDisplay();
 	display.setTextSize(1);
@@ -179,21 +214,12 @@ void measure(){
 #elif (RUNMODE == FAKE)
 // fake some values
 void measure(){
-	uint16_t c = 0;
-	for(c = 0; c < SENSOR_COUNT; c++)
-		sensorvalues[c] = 22.55F;
-
-	Serial.print("{");
-	Serial.print("\"topic-name\":\"water-temperatures\",");
-	Serial.print("\"values\": [");
-	Serial.print("\"");Serial.print(sensorvalues[0]);Serial.print("\",");
-	Serial.print("\"");Serial.print(sensorvalues[1]);Serial.print("\",");
-	Serial.print("\"");Serial.print(sensorvalues[2]);Serial.print("\",");
-	Serial.print("\"");Serial.print(sensorvalues[3]);Serial.print("\",");
-	Serial.print("\"");Serial.print(sensorvalues[4]);Serial.print("\"");
-	Serial.print("]");
-	Serial.print("}");
-	Serial.println();
+	sensorvalues[0] = 20.55F;
+	sensorvalues[1] = 21.55F;
+	sensorvalues[2] = 22.55F;
+	sensorvalues[3] = 23.55F;
+	sensorvalues[4] = 24.55F;
+	array2json();
 }
 
 #else
