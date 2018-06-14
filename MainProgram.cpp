@@ -50,7 +50,6 @@ Adafruit_PCD8544 display = Adafruit_PCD8544(DIPLAY_SCLK, DIPLAY_DIN, DIPLAY_DC, 
 
 char msgbuf[MESSAGEBUFFER_SIZE];
 uint32_t lasttime = 0;
-uint32_t cycletime = SAMPLETIME_MS;
 float sensorvalues[SENSOR_COUNT];
 
 /*
@@ -91,6 +90,7 @@ void setup(){
 void loop(){
 	if( (millis()-lasttime) > SAMPLETIME_MS){
 		measure();
+		lasttime = millis();
 	}
 }
 

@@ -76,24 +76,12 @@ INC    += $(ARDUINO_INC)   .
 ARDUINO_OPTS  = -DARDUINO=$(ARDUINO_VERSION)
 ARDUINO_OPTS += -DARDUINO_AVR_LEONARDO
 ARDUINO_OPTS += -DARDUINO_ARCH_AVR  
+ARDUINO_OPTS += -DUSB_VID=0x2341 
+ARDUINO_OPTS += -DUSB_PID=0x8036
 
-
-# Optimization level, can be [0, 1, 2, 3, s].
-#     0 = turn off optimization. s = optimize for size.
-#     (Note: 3 is not always the best optimization level. See avr-libc FAQ.)
 OPT = s
 
-# Debugging format.
-#     Native formats for AVR-GCC's -g are dwarf-2 [default] or stabs.
-#     AVR Studio 4.10 requires dwarf-2.
-#     AVR [Extended] COFF format requires stabs, plus an avr-objcopy run.
 DEBUG = dwarf-2
-
-# Compiler flag to set the C Standard level.
-#     c89   = "ANSI" C
-#     gnu89 = c89 plus GCC extensions
-#     c99   = ISO C99 standard (not yet fully implemented)
-#     gnu99 = c99 plus GCC extensions
 CSTANDARD = -std=gnu11
 CPPSTANDARD = -std=gnu++11
 
@@ -116,10 +104,6 @@ CPPDEFS  = -DF_CPU=$(F_CPU)UL
 CPPDEFS += -DF_USB=$(F_USB)UL
 CPPDEFS += -DBOARD=BOARD_$(BOARD) -DARCH=ARCH_$(ARCH)
 CPPDEFS += $(ARDUINO_OPTS)
-
-#CPPDEFS += -D__STDC_LIMIT_MACROS
-#CPPDEFS += -D__STDC_CONSTANT_MACROS
-
 
 
 #---------------- Compiler Options C ----------------
@@ -205,15 +189,7 @@ SCANF_LIB_MIN = -Wl,-u,vfscanf -lscanf_min
 
 # Floating point + %[ scanf version (requires MATH_LIB = -lm below)
 SCANF_LIB_FLOAT = -Wl,-u,vfscanf -lscanf_flt
-
-
 MATH_LIB = -lm
-
-
-# List any extra directories to look for libraries here.
-#     Each directory must be seperated by a space.
-#     Use forward slashes for directory separators.
-#     For a directory that has spaces, enclose it in quotes.
 EXTRALIBDIRS =
 
 
@@ -249,18 +225,7 @@ LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 #---------------- Programming Options (avrdude) ----------------
 
 
-# Programming hardware
-# Type: avrdude -c ?
-# to get a full listing.
-#
-ifndef PROGRAMMER
-AVRDUDE_PROGRAMMER = avr109
-else
 AVRDUDE_PROGRAMMER = $(PROGRAMMER)
-endif
-
-
-
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
 
@@ -279,7 +244,7 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 # to submit bug reports.
 #AVRDUDE_VERBOSE = -v -v
 
-AVRDUDE_FLAGS = -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
+AVRDUDE_FLAGS = -p $(MCU) -P $(AVRDUDE_PORT) -c $(PROGRAMMER)
 AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
 AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
@@ -417,7 +382,7 @@ dump:
 	@echo "Target:     $(TARGET)"  >> source.txt
 	@echo "mcu:        $(MCU)"  >> source.txt
 	@echo "variant:    $(VARIANT)"  >> source.txt
-	@echo "programmer: $(AVRDUDE_PROGRAMMER)"  >> source.txt
+	@echo "programmer: $(PROGRAMMER)"  >> source.txt
 	@echo "> Library Configuration" >> source.txt
 	@echo "used:" >> source.txt
 	@$(foreach src, $(CPPSRC-y), echo $(src)>> source.txt;)
