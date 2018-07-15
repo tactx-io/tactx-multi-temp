@@ -44,7 +44,7 @@
 #----------------------------------------------------------------------------
 
 # This is the default COM port. It is overriden by config.mk
-AVRDUDE_PORT = //./COM5
+AVRDUDE_PORT = //./COM45
 
 # Target architecture (see library "Board Types" documentation).
 ARCH = AVR8

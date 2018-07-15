@@ -29,8 +29,8 @@
 #define FAKE 1
 #define ADDRESS 2
 
-//#define RUNMODE REAL
-#define RUNMODE FAKE
+#define RUNMODE REAL
+//#define RUNMODE FAKE
 //#define RUNMODE ADDRESS
 
 // Include C headers (ie, non C++ headers) in this block
@@ -212,13 +212,21 @@ void measure(){
 	}
 }
 #elif (RUNMODE == FAKE)
+
+uint8_t cc = 0;
 // fake some values
 void measure(){
-	sensorvalues[0] = 20.55F;
-	sensorvalues[1] = 21.55F;
-	sensorvalues[2] = 22.55F;
-	sensorvalues[3] = 23.55F;
-	sensorvalues[4] = 24.55F;
+
+
+	sensorvalues[0] = 20.55F + cc;
+	sensorvalues[1] = 21.55F - cc + 0.4*cc;
+	sensorvalues[2] = 22.55F + cc - 0.3*cc;
+	sensorvalues[3] = 23.55F + cc*0.5 ;
+	sensorvalues[4] = 24.55F - cc +1;
+
+	cc++;
+	if(cc > 10)
+		cc = 0;
 	array2json();
 }
 
